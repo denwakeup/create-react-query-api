@@ -1,0 +1,70 @@
+{
+  "name": "create-react-query-api",
+  "version": "0.0.1",
+  "description": "react query api builder",
+  "main": "dist/index.js",
+  "sideEffects": false,
+  "files": [
+    "dist"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/denwakeup/create-react-query-api.git"
+  },
+  "keywords": [
+    "react",
+    "react-query"
+  ],
+  "scripts": {
+    "build": "npm run clear:build && tsc",
+    "clear:build": "rm -rf ./dist",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage --colors",
+    "preversion": "npm run test && npm run build",
+    "postversion": "git push && git push --tags",
+    "reinstall": "npm run clear && npm i",
+    "clear": "rm -rf ./node_modules",
+    "types:check": "tsc --noEmit",
+    "lint": "eslint --fix ./src/**/*.ts"
+  },
+  "peerDependencies": {
+    "react-query": "^3.34.14"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.17.0",
+    "@babel/preset-env": "^7.16.11",
+    "@babel/preset-react": "^7.16.7",
+    "@babel/preset-typescript": "^7.16.7",
+    "@testing-library/react-hooks": "7.0.2",
+    "@types/jest": "27.4.0",
+    "@typescript-eslint/eslint-plugin": "5.10.2",
+    "@typescript-eslint/parser": "5.10.2",
+    "babel-jest": "^27.5.0",
+    "eslint": "8.8.0",
+    "eslint-config-airbnb": "19.0.4",
+    "eslint-config-prettier": "8.3.0",
+    "eslint-import-resolver-typescript": "2.5.0",
+    "eslint-plugin-import": "2.25.4",
+    "eslint-plugin-jsx-a11y": "6.5.1",
+    "eslint-plugin-prettier": "4.0.0",
+    "husky": "7.0.4",
+    "jest": "27.5.0",
+    "lint-staged": "12.3.3",
+    "prettier": "2.5.1",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "react-query": "^3.34.14",
+    "typescript": "4.5.5"
+  },
+  "lint-staged": {
+    "./**/*.{js,jsx,ts,tsx}": [
+      "prettier --write",
+      "eslint --fix"
+    ],
+    "./**/*.{json,md}": [
+      "prettier --write"
+    ]
+  }
+}
