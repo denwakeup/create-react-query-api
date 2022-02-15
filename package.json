@@ -32,6 +32,7 @@
     "test:coverage": "jest --coverage --colors",
     "prepack": "npm run test && npm run build",
     "preversion": "npm run test && npm run build",
+    "postversion": "git push && git push --tags",
     "reinstall": "npm run clear && npm i",
     "clear": "rm -rf ./node_modules",
     "types:check": "tsc --noEmit",
