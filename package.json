@@ -1,6 +1,6 @@
 {
   "name": "create-react-query-api",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "description": "react query api builder",
   "sideEffects": false,
   "files": [
