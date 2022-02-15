@@ -2,6 +2,8 @@ import path from 'path';
 import { defineConfig } from 'vite';
 import typescript from '@rollup/plugin-typescript';
 
+import packageJson from './package.json';
+
 export default defineConfig({
   build: {
     lib: {
@@ -10,7 +12,7 @@ export default defineConfig({
       fileName: (format) => `index.${format}.js`,
     },
     rollupOptions: {
-      external: ['react-query'],
+      external: [...Object.keys(packageJson.peerDependencies)],
       output: {
         globals: {
           'react-query': 'ReactQuery',
