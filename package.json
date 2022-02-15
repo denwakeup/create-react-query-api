@@ -2,11 +2,19 @@
   "name": "create-react-query-api",
   "version": "0.3.0",
   "description": "react query api builder",
-  "main": "dist/index.js",
   "sideEffects": false,
   "files": [
     "dist"
   ],
+  "main": "./dist/index.umd.js",
+  "module": "./dist/index.es.js",
+  "exports": {
+    ".": {
+      "import": "./dist/index.es.js",
+      "require": "./dist/index.umd.js"
+    }
+  },
+  "types": "./dist/index.d.ts",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -17,13 +25,13 @@
     "react-query"
   ],
   "scripts": {
-    "build": "npm run clear:build && tsc",
+    "build": "npm run clear:build && vite build",
     "clear:build": "rm -rf ./dist",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage --colors",
+    "prepack": "npm run test && npm run build",
     "preversion": "npm run test && npm run build",
-    "postversion": "git push && git push --tags",
     "reinstall": "npm run clear && npm i",
     "clear": "rm -rf ./node_modules",
     "types:check": "tsc --noEmit",
@@ -37,6 +45,7 @@
     "@babel/preset-env": "^7.16.11",
     "@babel/preset-react": "^7.16.7",
     "@babel/preset-typescript": "^7.16.7",
+    "@rollup/plugin-typescript": "^8.3.0",
     "@testing-library/react-hooks": "7.0.2",
     "@types/jest": "27.4.0",
     "@typescript-eslint/eslint-plugin": "5.10.2",
@@ -56,7 +65,8 @@
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-query": "^3.34.14",
-    "typescript": "4.5.5"
+    "typescript": "4.5.5",
+    "vite": "^2.8.3"
   },
   "lint-staged": {
     "./**/*.{js,jsx,ts,tsx}": [
