@@ -1,4 +1,4 @@
-import { IQueryKeyBuilder } from './types/queryKeyBuilder';
+import { IQueryKeyBuilder } from './types';
 
 interface IParams {
   queryKey: string;

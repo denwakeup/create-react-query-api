@@ -9,9 +9,9 @@ import {
   IQueryApiWithParams,
   IUniqQueryApiUnion,
   IQueryApiUnion,
+  IQueryKeyBuilder,
 } from './types';
 import { buildUniqApiKeys } from './buildUniqApiKeys';
-import { IQueryKeyBuilder } from './types/queryKeyBuilder';
 
 interface IBaseParams<K extends string> {
   queryKey: K;
