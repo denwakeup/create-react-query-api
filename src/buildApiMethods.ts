@@ -1,5 +1,5 @@
 import { createQueryKeyBuilder } from './createQueryKeyBuilder';
-import { createUseApiHook } from './createUseApiHook';
+import { createQueryHook } from './createQueryHook';
 import { IQueryApi, IQueryKeyBuilder } from './types';
 
 interface IParams<R, P> {
@@ -15,7 +15,7 @@ export const buildApiMethods = <R, P>({
 }: IParams<R, P>): IQueryApi<R, P> => {
   const getQueryKey = createQueryKeyBuilder<P>({ queryKey, queryKeyBuilder });
 
-  const useQuery = createUseApiHook({
+  const useQuery = createQueryHook({
     fetchQuery,
     getQueryKey,
   });

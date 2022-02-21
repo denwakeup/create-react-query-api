@@ -71,6 +71,24 @@ getTodoQueryKey(); // ['allTodo', 'todo']
 getTodoQueryKey('2'); // ['allTodo', 'todo', '2']
 ```
 
+### Conditional query with TypeScript
+
+```ts
+import { SkipToken } from 'create-react-query-api';
+
+const { fetchTodoQuery } = createQueryApi({
+  queryKey: 'todo',
+  queryFn: (id: string) =>
+    fetch(`/api/todo/${id}`).then((response): Promise<Todo> => response.json()),
+});
+
+// ...
+// If you pass the skip token instead of parameters it will automatically disable the query ({ enabled: false })
+const { data, isLoading } = useTodoQuery({
+  params: id ?? SkipToken,
+});
+```
+
 ### Reuse fetch handler
 
 ```ts

@@ -71,7 +71,7 @@ module.exports = {
     ],
     'import/no-extraneous-dependencies': [
       'error',
-      { devDependencies: ['**/*.test.ts', 'vite.config.js'] },
+      { devDependencies: ['**/*.test.{ts,tsx}', 'vite.config.js'] },
     ],
   },
   overrides: [
