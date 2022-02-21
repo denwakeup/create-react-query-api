@@ -10,7 +10,9 @@ interface IParams<R, P> {
 
 export const createQueryHook =
   <P, R>({ getQueryKey, fetchQuery }: IParams<R, P>) =>
-  (options?: IQueryHookCommonOptions<R> & Partial<IQueryHookParams<P>>) => {
+  <E = unknown, D = R>(
+    options?: IQueryHookCommonOptions<R, E, D> & Partial<IQueryHookParams<P>>
+  ) => {
     const params = options?.params === SkipToken ? undefined : options?.params;
 
     return useQuery({

@@ -28,8 +28,8 @@ describe('useQuery hook creator', () => {
 
   it('query with params should work correctly', async () => {
     const useQuery = createQueryHook({
-      getQueryKey: (id: number) => ['todo', id],
-      fetchQuery: (id: number) => ({ id }),
+      getQueryKey: (id?: number) => ['todo', id],
+      fetchQuery: (id?: number) => ({ id }),
     });
 
     const { result, waitFor, rerender } = renderHook(
@@ -63,7 +63,7 @@ describe('useQuery hook creator', () => {
     const mockedFetch = jest.fn().mockImplementation((id: number) => ({ id }));
 
     const useQuery = createQueryHook({
-      getQueryKey: (id: number) => ['todo', id],
+      getQueryKey: (id?: number) => ['todo', id],
       fetchQuery: mockedFetch,
     });
 
