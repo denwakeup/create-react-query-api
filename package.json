@@ -24,18 +24,27 @@
     "react",
     "react-query"
   ],
+  "size-limit": [
+    {
+      "path": "dist/index.umd.js",
+      "limit": "10 KB"
+    },
+    {
+      "path": "dist/index.es.js",
+      "limit": "10 KB"
+    }
+  ],
   "scripts": {
-    "build": "npm run clear:build && vite build",
+    "build": "yarn clear:build && vite build",
     "clear:build": "rm -rf ./dist",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage --colors",
-    "prepack": "npm run test && npm run build",
-    "preversion": "npm run test && npm run build",
-    "reinstall": "npm run clear && npm i",
-    "clear": "rm -rf ./node_modules",
+    "prepack": "yarn test && yarn build",
+    "reinstall": "yarn dlx rimraf ./node_modules && yarn",
     "types:check": "tsc --noEmit",
-    "lint": "eslint --fix ./src/**/*.ts"
+    "lint": "eslint --fix ./src/**/*.ts",
+    "size": "size-limit"
   },
   "peerDependencies": {
     "react-query": "^3.34.14"
@@ -46,6 +55,7 @@
     "@babel/preset-react": "^7.16.7",
     "@babel/preset-typescript": "^7.16.7",
     "@rollup/plugin-typescript": "^8.3.0",
+    "@size-limit/preset-small-lib": "^7.0.8",
     "@testing-library/react-hooks": "7.0.2",
     "@types/jest": "27.4.0",
     "@typescript-eslint/eslint-plugin": "5.10.2",
@@ -58,6 +68,8 @@
     "eslint-plugin-import": "2.25.4",
     "eslint-plugin-jsx-a11y": "6.5.1",
     "eslint-plugin-prettier": "4.0.0",
+    "eslint-plugin-react": "^7.28.0",
+    "eslint-plugin-react-hooks": "^4.3.0",
     "husky": "7.0.4",
     "jest": "27.5.0",
     "lint-staged": "12.3.3",
@@ -65,6 +77,10 @@
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-query": "^3.34.14",
+    "rimraf": "^3.0.2",
+    "rollup": "2.68.0",
+    "size-limit": "^7.0.8",
+    "tslib": "^2.3.1",
     "typescript": "4.5.5",
     "vite": "^2.8.3"
   },
@@ -76,5 +92,6 @@
     "./**/*.{json,md}": [
       "prettier --write"
     ]
-  }
+  },
+  "packageManager": "yarn@3.2.0"
 }

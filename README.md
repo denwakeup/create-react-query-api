@@ -1,5 +1,7 @@
 # Create React Query api
 
+[![npm](https://img.shields.io/npm/v/create-react-query-api)](https://www.npmjs.com/package/create-react-query-api)
+
 Simple [**React Query**](https://react-query.tanstack.com) wrapper to create API with query key bound
 
 ## Install
