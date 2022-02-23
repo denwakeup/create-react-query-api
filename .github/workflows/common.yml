@@ -40,3 +40,12 @@ jobs:
 
       - name: Build
         run: yarn build
+
+  build_success:
+    runs-on: ubuntu-latest
+    name: Build Success
+    needs: build
+    steps:
+      - name: Check build matrix status
+        if: ${{ needs.build.result != 'success' }}
+        run: exit 1
