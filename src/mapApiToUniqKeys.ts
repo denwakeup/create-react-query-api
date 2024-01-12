@@ -8,4 +8,4 @@ export const mapApiToUniqKeys = <K extends string, R, P>(
     [uniqKeys.useQuery]: api.useQuery,
     [uniqKeys.fetchQuery]: api.fetchQuery,
     [uniqKeys.getQueryKey]: api.getQueryKey,
-  } as IUniqQueryApi<K, R, P>);
+  }) as IUniqQueryApi<K, R, P>;

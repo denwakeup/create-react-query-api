@@ -1,8 +1,11 @@
-const { name: packageName } = require('./package.json');
+import { createRequire } from 'node:module';
 
-module.exports = {
-  name: packageName,
-  displayName: packageName,
+const require = createRequire(import.meta.url);
+const pkg = require('./package.json');
+
+/** @type {import('jest').Config} */
+const config = {
+  displayName: pkg.name,
   clearMocks: true,
   coverageDirectory: 'coverage',
   collectCoverageFrom: ['<rootDir>/src/**/*.{ts,tsx}'],
@@ -15,4 +18,7 @@ module.exports = {
       lines: 100,
     },
   },
+  prettierPath: require.resolve('prettier-2'),
 };
+
+export default config;

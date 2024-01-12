@@ -1,4 +1,4 @@
-import { QueryKey, useQuery } from 'react-query';
+import { QueryKey, useQuery } from '@tanstack/react-query';
 
 import { SkipToken } from './constants';
 import { IQueryHookCommonOptions, IQueryHookParams } from './types';
