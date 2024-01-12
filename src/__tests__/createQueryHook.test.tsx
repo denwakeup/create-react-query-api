@@ -1,14 +1,13 @@
-import { act, renderHook } from '@testing-library/react-hooks';
-import { FC } from 'react';
-import { QueryClient, QueryClientProvider } from 'react-query';
+import { act, renderHook, waitFor } from '@testing-library/react';
+import { FC, PropsWithChildren } from 'react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
-import { SkipToken } from '../constants';
+import { SkipToken, TSkipToken } from '../constants';
 import { createQueryHook } from '../createQueryHook';
-import { IQueryHookCommonOptions, IQueryHookParams } from '../types';
 
 describe('useQuery hook creator', () => {
   const queryClient = new QueryClient();
-  const wrapper: FC<{ params: number }> = ({ children }) => (
+  const wrapper: FC<PropsWithChildren> = ({ children }) => (
     <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
   );
 
@@ -18,7 +17,7 @@ describe('useQuery hook creator', () => {
       fetchQuery: () => ({ id: 1 }),
     });
 
-    const { result, waitFor } = renderHook(() => useQuery(), { wrapper });
+    const { result } = renderHook(() => useQuery(), { wrapper });
 
     await waitFor(() => result.current.isSuccess);
 
@@ -32,15 +31,12 @@ describe('useQuery hook creator', () => {
       fetchQuery: (id?: number) => ({ id }),
     });
 
-    const { result, waitFor, rerender } = renderHook(
-      (props) => useQuery(props),
-      {
-        wrapper,
-        initialProps: {
-          params: 2,
-        },
-      }
-    );
+    const { result, rerender } = renderHook((props) => useQuery(props), {
+      wrapper,
+      initialProps: {
+        params: 2,
+      },
+    });
 
     await waitFor(() => result.current.isSuccess);
     expect(result.current.data).toEqual({ id: 2 });
@@ -54,9 +50,7 @@ describe('useQuery hook creator', () => {
   });
 
   it('skip token should work correctly', async () => {
-    const wrapperWithToken: FC<
-      IQueryHookCommonOptions<{ id: number }> & IQueryHookParams<number>
-    > = ({ children }) => (
+    const wrapperWithToken: FC<PropsWithChildren> = ({ children }) => (
       <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
     );
 
@@ -67,21 +61,23 @@ describe('useQuery hook creator', () => {
       fetchQuery: mockedFetch,
     });
 
-    const { result, waitFor, rerender } = renderHook(
-      (props) => useQuery(props),
-      {
-        wrapper: wrapperWithToken,
-        initialProps: {
-          params: SkipToken,
-        },
-      }
-    );
+    const initialParams: {
+      params: TSkipToken | number;
+      enabled?: boolean;
+    } = {
+      params: SkipToken,
+    };
 
-    await waitFor(() => result.current.isIdle);
-    expect(mockedFetch).not.toBeCalled();
+    const { result, rerender } = renderHook((props) => useQuery(props), {
+      wrapper: wrapperWithToken,
+      initialProps: initialParams,
+    });
+
+    await waitFor(() => result.current.fetchStatus === 'idle');
+    expect(mockedFetch).not.toHaveBeenCalled();
 
     rerender({ params: SkipToken, enabled: true });
-    expect(mockedFetch).not.toBeCalled();
+    expect(mockedFetch).not.toHaveBeenCalled();
 
     await act(async () => {
       rerender({ params: 3 });

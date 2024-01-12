@@ -1,12 +1,12 @@
-import { act, renderHook } from '@testing-library/react-hooks';
-import { FC } from 'react';
-import { QueryClient, QueryClientProvider } from 'react-query';
+import { act, renderHook, waitFor } from '@testing-library/react';
+import { FC, PropsWithChildren } from 'react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 import { createQueryApi } from '../createQueryApi';
 
 describe('QueryApi', () => {
   let queryClient: QueryClient;
-  let wrapper: FC<{ params: number }>;
+  let wrapper: FC<PropsWithChildren>;
 
   const mockFetch = jest.fn();
   const mockQueryKeyFn = (keys: readonly unknown[]) => ['list', ...keys];
@@ -76,15 +76,12 @@ describe('QueryApi', () => {
         queryKeyFn: mockQueryKeyFn,
       });
 
-      const { result, waitFor, rerender } = renderHook(
-        (props) => useTodoQuery(props),
-        {
-          wrapper,
-          initialProps: {
-            params: 2,
-          },
-        }
-      );
+      const { result, rerender } = renderHook((props) => useTodoQuery(props), {
+        wrapper,
+        initialProps: {
+          params: 2,
+        },
+      });
 
       await waitFor(() => result.current.isSuccess);
       expect(result.current.data).toEqual({ id: 2 });
@@ -107,7 +104,7 @@ describe('QueryApi', () => {
         queryKeyFn: mockQueryKeyFn,
       });
 
-      const { result, waitFor } = renderHook((props) => useTodoQuery(props), {
+      const { result } = renderHook((props) => useTodoQuery(props), {
         wrapper,
         initialProps: {
           params: 2,
@@ -118,7 +115,7 @@ describe('QueryApi', () => {
       expect(result.current.data).toEqual({ id: 2 });
 
       await act(async () => {
-        await queryClient.invalidateQueries(getTodoQueryKey(2));
+        await queryClient.invalidateQueries({ queryKey: getTodoQueryKey(2) });
       });
 
       expect(result.current.data).toEqual({ id: 2 });

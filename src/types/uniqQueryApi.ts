@@ -8,7 +8,7 @@ import { IUniqApiKeys } from './uniqApiKeys';
 
 export type UniqMethodsBuilder<
   K extends string,
-  Api extends IQueryApiUnion<any, any>
+  Api extends IQueryApiUnion<any, any>,
 > = {
   [key in IUniqApiKeys<K>['useQuery']]: Api['useQuery'];
 } & {
@@ -25,12 +25,12 @@ export type IUniqQueryApi<K extends string, R, P> = UniqMethodsBuilder<
 export type IUniqQueryApiWithParams<
   K extends string,
   R,
-  P
+  P,
 > = UniqMethodsBuilder<K, IQueryApiWithParams<R, P>>;
 
 export type IUniqQueryApiWithoutParams<
   K extends string,
-  R
+  R,
 > = UniqMethodsBuilder<K, IQueryApiWithoutParams<R>>;
 
 export type IUniqQueryApiUnion<K extends string, R, P> =
