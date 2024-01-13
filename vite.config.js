@@ -15,7 +15,7 @@ export default defineConfig({
       external: [...Object.keys(packageJson.peerDependencies)],
       output: {
         globals: {
-          'react-query': 'ReactQuery',
+          '@tanstack/react-query': 'ReactQuery',
         },
       },
     },
