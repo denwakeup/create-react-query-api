@@ -1,6 +1,6 @@
 {
   "name": "create-react-query-api",
-  "version": "1.0.1",
+  "version": "2.0.0",
   "description": "react query api builder",
   "sideEffects": false,
   "type": "module",
@@ -47,13 +47,14 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage --colors",
-    "prepack": "yarn test && yarn build",
+    "prepack": "pinst --disable && yarn test && yarn build",
     "reinstall": "rimraf node_modules && yarn",
     "types:check": "tsc --noEmit",
     "lint": "biome check --write .",
     "size": "size-limit",
-    "prepare": "husky",
-    "lint:check": "biome check ."
+    "lint:check": "biome check .",
+    "postinstall": "husky",
+    "postpack": "pinst --enable"
   },
   "peerDependencies": {
     "@tanstack/react-query": "^5.25.0"
@@ -77,6 +78,7 @@
     "jest": "^30.5.2",
     "jest-environment-jsdom": "^30.5.2",
     "lint-staged": "^17.6.0",
+    "pinst": "3.0.0",
     "react": "^19.3.1",
     "react-dom": "^19.3.1",
     "rimraf": "^6.1.4",

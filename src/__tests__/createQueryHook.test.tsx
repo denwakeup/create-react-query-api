@@ -108,4 +108,33 @@ describe('useQuery hook creator', () => {
     expect(result.current.isPending).toBe(true);
     expect(mockedFetch).not.toHaveBeenCalled();
   });
+
+  it('refetch should not call fetchQuery when query is skipped', async () => {
+    const consoleError = jest
+      .spyOn(console, 'error')
+      .mockImplementation(() => undefined);
+    const noRetryClient = new QueryClient({
+      defaultOptions: { queries: { retry: false } },
+    });
+    const noRetryWrapper: FC<PropsWithChildren> = ({ children }) => (
+      <QueryClientProvider client={noRetryClient}>
+        {children}
+      </QueryClientProvider>
+    );
+    const mockedFetch = jest.fn();
+    const useQuery = createQueryHook({
+      getQueryKey: (id?: number) => ['skipped-refetch', id],
+      fetchQuery: mockedFetch,
+    });
+
+    const { result } = renderHook(() => useQuery({ params: SkipToken }), {
+      wrapper: noRetryWrapper,
+    });
+
+    const refetchResult = await act(() => result.current.refetch());
+
+    expect(mockedFetch).not.toHaveBeenCalled();
+    expect(refetchResult.error).toBeInstanceOf(Error);
+    consoleError.mockRestore();
+  });
 });

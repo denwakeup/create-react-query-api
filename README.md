@@ -89,6 +89,7 @@ const { useTodoQuery } = createQueryApi({
 // ...
 // If you pass the skip token instead of parameters it will disable the query.
 // `SkipToken` is the same value as `skipToken` from `@tanstack/react-query`, so you can use either one.
+// Note: `refetch()` does not work on a skipped query, pass real params to enable it.
 const { data, isLoading } = useTodoQuery({
   params: id ?? SkipToken,
 });
