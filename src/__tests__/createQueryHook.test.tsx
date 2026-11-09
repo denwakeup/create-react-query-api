@@ -1,4 +1,8 @@
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import {
+  QueryClient,
+  QueryClientProvider,
+  skipToken,
+} from '@tanstack/react-query';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { FC, PropsWithChildren } from 'react';
 
@@ -85,5 +89,23 @@ describe('useQuery hook creator', () => {
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
     expect(mockedFetch).toHaveBeenCalledWith(3);
     expect(result.current.data).toEqual({ id: 3 });
+  });
+
+  it('should accept skipToken from @tanstack/react-query', async () => {
+    expect(SkipToken).toBe(skipToken);
+
+    const mockedFetch = jest.fn();
+    const useQuery = createQueryHook({
+      getQueryKey: (id?: number) => ['skipped', id],
+      fetchQuery: mockedFetch,
+    });
+
+    const { result } = renderHook(() => useQuery({ params: skipToken }), {
+      wrapper,
+    });
+
+    await waitFor(() => expect(result.current.fetchStatus).toBe('idle'));
+    expect(result.current.isPending).toBe(true);
+    expect(mockedFetch).not.toHaveBeenCalled();
   });
 });

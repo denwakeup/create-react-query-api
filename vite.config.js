@@ -9,7 +9,6 @@ export default defineConfig({
     lib: {
       entry: path.resolve(import.meta.dirname, 'src/index.ts'),
       name: 'CreateReactQueryApi',
-      formats: ['es', 'umd'],
       fileName: (format) => `index.${format}.js`,
     },
     rollupOptions: {
