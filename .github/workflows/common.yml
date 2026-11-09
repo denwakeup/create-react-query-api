@@ -17,23 +17,26 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        node: ["18.12.x", "20.x"]
+        node: ['22.x', '24.x']
         os: [ubuntu-latest, windows-latest, macOS-latest]
 
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Use Node ${{ matrix.node }}
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: ${{ matrix.node }}
 
-      - name: Install deps and build (with cache)
-        uses: bahmutov/npm-install@v1
+      - name: Install deps
+        run: yarn install --immutable
+
+      - name: Types check
+        run: yarn types:check
 
       - name: Lint
-        run: yarn lint
+        run: yarn eslint .
 
       - name: Test
         run: yarn test --ci --coverage --maxWorkers=2
@@ -45,6 +48,7 @@ jobs:
     runs-on: ubuntu-latest
     name: Build Success
     needs: build
+    if: ${{ always() }}
     steps:
       - name: Check build matrix status
         if: ${{ needs.build.result != 'success' }}

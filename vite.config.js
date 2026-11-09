@@ -1,14 +1,15 @@
-import path from 'path';
+import path from 'node:path';
 import { defineConfig } from 'vite';
 import typescript from '@rollup/plugin-typescript';
 
-import packageJson from './package.json';
+import packageJson from './package.json' with { type: 'json' };
 
 export default defineConfig({
   build: {
     lib: {
-      entry: path.resolve(__dirname, 'src/index.ts'),
+      entry: path.resolve(import.meta.dirname, 'src/index.ts'),
       name: 'CreateReactQueryApi',
+      formats: ['es', 'umd'],
       fileName: (format) => `index.${format}.js`,
     },
     rollupOptions: {
@@ -20,5 +21,12 @@ export default defineConfig({
       },
     },
   },
-  plugins: [typescript()],
+  plugins: [
+    typescript({
+      rootDir: 'src',
+      declarationDir: 'dist',
+      noEmit: false,
+      exclude: ['**/__tests__/**'],
+    }),
+  ],
 });

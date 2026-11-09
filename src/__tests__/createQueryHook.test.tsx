@@ -19,7 +19,7 @@ describe('useQuery hook creator', () => {
 
     const { result } = renderHook(() => useQuery(), { wrapper });
 
-    await waitFor(() => result.current.isSuccess);
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
 
     expect(result.current.data).toEqual({ id: 1 });
     expect(queryClient.getQueryData(['todo'])).toEqual({ id: 1 });
@@ -38,12 +38,12 @@ describe('useQuery hook creator', () => {
       },
     });
 
-    await waitFor(() => result.current.isSuccess);
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
     expect(result.current.data).toEqual({ id: 2 });
     expect(queryClient.getQueryData(['todo', 2])).toEqual({ id: 2 });
 
     rerender({ params: 3 });
-    await waitFor(() => result.current.isSuccess);
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
     expect(result.current.data).toEqual({ id: 3 });
     expect(queryClient.getQueryData(['todo', 2])).toEqual({ id: 2 });
     expect(queryClient.getQueryData(['todo', 3])).toEqual({ id: 3 });
@@ -73,7 +73,7 @@ describe('useQuery hook creator', () => {
       initialProps: initialParams,
     });
 
-    await waitFor(() => result.current.fetchStatus === 'idle');
+    await waitFor(() => expect(result.current.fetchStatus).toBe('idle'));
     expect(mockedFetch).not.toHaveBeenCalled();
 
     rerender({ params: SkipToken, enabled: true });
@@ -82,7 +82,7 @@ describe('useQuery hook creator', () => {
     await act(async () => {
       rerender({ params: 3 });
     });
-    await waitFor(() => result.current.isSuccess);
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
     expect(mockedFetch).toHaveBeenCalledWith(3);
     expect(result.current.data).toEqual({ id: 3 });
   });
