@@ -17,7 +17,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        node: ['22.x', '24.x']
+        node: ["22.x", "24.x"]
         os: [ubuntu-latest, windows-latest, macOS-latest]
 
     steps:
@@ -36,7 +36,7 @@ jobs:
         run: yarn types:check
 
       - name: Lint
-        run: yarn eslint .
+        run: yarn lint:check
 
       - name: Test
         run: yarn test --ci --coverage --maxWorkers=2

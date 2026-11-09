@@ -1,6 +1,6 @@
 import path from 'node:path';
-import { defineConfig } from 'vite';
 import typescript from '@rollup/plugin-typescript';
+import { defineConfig } from 'vite';
 
 import packageJson from './package.json' with { type: 'json' };
 

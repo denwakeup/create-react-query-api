@@ -1,17 +1,17 @@
 import { buildApiMethods } from './buildApiMethods';
+import { buildUniqApiKeys } from './buildUniqApiKeys';
 import { mapApiToUniqKeys } from './mapApiToUniqKeys';
 import {
   IQueryApi,
-  IUniqQueryApiWithParams,
-  IUniqQueryApi,
-  IUniqQueryApiWithoutParams,
+  IQueryApiUnion,
   IQueryApiWithoutParams,
   IQueryApiWithParams,
-  IUniqQueryApiUnion,
-  IQueryApiUnion,
   IQueryKeyBuilder,
+  IUniqQueryApi,
+  IUniqQueryApiUnion,
+  IUniqQueryApiWithoutParams,
+  IUniqQueryApiWithParams,
 } from './types';
-import { buildUniqApiKeys } from './buildUniqApiKeys';
 
 interface IBaseParams<K extends string> {
   queryKey: K;

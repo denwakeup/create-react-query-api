@@ -24,4 +24,6 @@ export interface IQueryApiWithoutParams<R> extends IQueryBaseApi {
 }
 
 export type IQueryApiUnion<R, P> =
-  IQueryApi<R, P> | IQueryApiWithParams<R, P> | IQueryApiWithoutParams<R>;
+  | IQueryApi<R, P>
+  | IQueryApiWithParams<R, P>
+  | IQueryApiWithoutParams<R>;
