@@ -2,15 +2,15 @@
 
 [![npm](https://img.shields.io/npm/v/create-react-query-api)](https://www.npmjs.com/package/create-react-query-api)
 
-Simple [**React Query**](https://react-query.tanstack.com) wrapper to create API with query key bound
+Simple [**React Query**](https://tanstack.com/query/latest) wrapper to create API with query key bound
 
 ## Install
 
 ```bash
-// yarn
+# yarn
 yarn add create-react-query-api
 
-// npm
+# npm
 npm i --save create-react-query-api
 ```
 
@@ -49,8 +49,8 @@ const { getTodoQueryKey } = createQueryApi({
     fetch(`/api/todo/${id}`).then((response): Promise<Todo> => response.json()),
 });
 
-queryClient.invalidateQueries(getTodoQueryKey()); // queryKey=['todo']
-queryClient.invalidateQueries(getTodoQueryKey('1')); // queryKey=['todo', '1']
+queryClient.invalidateQueries({ queryKey: getTodoQueryKey() }); // queryKey=['todo']
+queryClient.invalidateQueries({ queryKey: getTodoQueryKey('1') }); // queryKey=['todo', '1']
 ```
 
 ### Using a key hierarchy
@@ -78,7 +78,7 @@ getTodoQueryKey('2'); // ['allTodo', 'todo', '2']
 ```ts
 import { SkipToken } from 'create-react-query-api';
 
-const { fetchTodoQuery } = createQueryApi({
+const { useTodoQuery } = createQueryApi({
   queryKey: 'todo',
   queryFn: (id: string) =>
     fetch(`/api/todo/${id}`).then((response): Promise<Todo> => response.json()),
@@ -105,6 +105,20 @@ const { fetchTodoQuery } = createQueryApi({
 await fetchTodoQuery('1');
 ```
 
+### Request cancellation
+
+`queryFn` receives the React Query [function context](https://tanstack.com/query/latest/docs/framework/react/guides/query-cancellation) as the second argument
+
+```ts
+const { useTodoQuery } = createQueryApi({
+  queryKey: 'todo',
+  queryFn: (id: string, { signal }) =>
+    fetch(`/api/todo/${id}`, { signal }).then(
+      (response): Promise<Todo> => response.json()
+    ),
+});
+```
+
 ### Disable unique api method names
 
 By default `createQueryApi` creates method names using the passed `queryKey`
@@ -120,10 +134,12 @@ const { useUserQuery, getUserQueryKey, fetchUserQuery } = createQueryApi({
   // ...
 });
 
-// You can disable this behavior by passing disableUniqKeys=false
+// You can disable this behavior by passing disableUniqKeys=true
 const { useQuery, fetchQuery, getQueryKey } = createQueryApi({
   queryKey: 'todo',
   disableUniqKeys: true,
   // ...
 });
 ```
+
+> Method names are built from `queryKey` as is (only the first letter is capitalized), so use a key that is a valid identifier part (`todoList`, not `todo-list`) or pass `disableUniqKeys: true`

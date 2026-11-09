@@ -7,7 +7,7 @@
   "files": [
     "dist"
   ],
-  "main": "./dist/index.umd.js",
+  "main": "./dist/index.umd.cjs",
   "module": "./dist/index.es.js",
   "exports": {
     ".": {
@@ -17,7 +17,7 @@
       },
       "require": {
         "types": "./dist/index.d.ts",
-        "default": "./dist/index.umd.js"
+        "default": "./dist/index.umd.cjs"
       }
     }
   },
@@ -33,7 +33,7 @@
   ],
   "size-limit": [
     {
-      "path": "dist/index.umd.js",
+      "path": "dist/index.umd.cjs",
       "limit": "10 KB"
     },
     {
@@ -47,10 +47,13 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage --colors",
-    "prepack": "yarn test && yarn build",
+    "postinstall": "husky install",
+    "prepack": "yarn test && yarn build && pinst --disable",
+    "postpack": "pinst --enable",
     "reinstall": "yarn dlx rimraf ./node_modules && yarn",
     "types:check": "tsc --noEmit",
-    "lint": "eslint --fix ./src/**/*.ts",
+    "lint": "eslint \"src/**/*.{ts,tsx}\"",
+    "lint:fix": "yarn lint --fix",
     "size": "size-limit"
   },
   "peerDependencies": {
@@ -83,6 +86,7 @@
     "jest": "29.7.0",
     "jest-environment-jsdom": "^29.7.0",
     "lint-staged": "15.2.0",
+    "pinst": "^3.0.0",
     "prettier": "3.2.1",
     "prettier-2": "npm:prettier@^2",
     "react": "^18.2.0",

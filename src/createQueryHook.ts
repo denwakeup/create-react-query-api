@@ -1,24 +1,33 @@
-import { QueryKey, useQuery } from '@tanstack/react-query';
+import {
+  DefaultError,
+  QueryFunctionContext,
+  QueryKey,
+  useQuery,
+} from '@tanstack/react-query';
 
-import { SkipToken } from './constants';
+import { SKIPPED_QUERY_KEY_PART, SkipToken } from './constants';
 import { IQueryHookCommonOptions, IQueryHookParams } from './types';
 
 interface IParams<R, P> {
   getQueryKey: (params?: P) => QueryKey;
-  fetchQuery: (params?: P) => Promise<R> | R;
+  fetchQuery: (params?: P, context?: QueryFunctionContext) => Promise<R> | R;
 }
 
 export const createQueryHook =
   <P, R>({ getQueryKey, fetchQuery }: IParams<R, P>) =>
-  <E = unknown, D = R>(
+  <E = DefaultError, D = R>(
     options?: IQueryHookCommonOptions<R, E, D> & Partial<IQueryHookParams<P>>
   ) => {
-    const params = options?.params === SkipToken ? undefined : options?.params;
+    const { params: rawParams, ...queryOptions } = options ?? {};
+    const isSkipped = rawParams === SkipToken;
+    const params = isSkipped ? undefined : (rawParams as P | undefined);
 
-    return useQuery({
-      ...options,
-      queryKey: getQueryKey(params),
-      queryFn: () => fetchQuery(params),
-      enabled: options?.params === SkipToken ? false : options?.enabled,
+    return useQuery<R, E, D>({
+      ...(queryOptions as IQueryHookCommonOptions<R, E, D>),
+      queryKey: isSkipped
+        ? [...getQueryKey(), SKIPPED_QUERY_KEY_PART]
+        : getQueryKey(params),
+      queryFn: (context) => fetchQuery(params, context),
+      enabled: isSkipped ? false : queryOptions.enabled,
     });
   };

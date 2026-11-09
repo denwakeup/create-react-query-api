@@ -56,10 +56,13 @@ describe('Api Methods builder', () => {
       },
     });
 
-    await waitFor(() => result.current.isSuccess);
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
 
     expect(result.current.data).toEqual({ id: 3 });
-    expect(mockFetch).toHaveBeenCalledWith(3);
+    expect(mockFetch).toHaveBeenCalledWith(
+      3,
+      expect.objectContaining({ signal: expect.any(AbortSignal) })
+    );
     expect(queryClient.getQueryData(apiMethods.getQueryKey(3))).toEqual({
       id: 3,
     });
