@@ -107,13 +107,13 @@ await fetchTodoQuery('1');
 
 ### Request cancellation
 
-`queryFn` receives the React Query [function context](https://tanstack.com/query/latest/docs/framework/react/guides/query-cancellation) as the second argument
+`queryFn` receives the React Query [function context](https://tanstack.com/query/latest/docs/framework/react/guides/query-cancellation) as the second argument. The context is `undefined` when the fetcher is called directly (`fetchTodoQuery('1')`), so it is typed as optional
 
 ```ts
 const { useTodoQuery } = createQueryApi({
   queryKey: 'todo',
-  queryFn: (id: string, { signal }) =>
-    fetch(`/api/todo/${id}`, { signal }).then(
+  queryFn: (id: string, context) =>
+    fetch(`/api/todo/${id}`, { signal: context?.signal }).then(
       (response): Promise<Todo> => response.json()
     ),
 });

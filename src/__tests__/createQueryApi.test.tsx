@@ -183,13 +183,16 @@ describe('QueryApi', () => {
     });
 
     it('should allow to use the query function context', async () => {
-      const { useTodoQuery } = createQueryApi({
+      const { useTodoQuery, fetchTodoQuery } = createQueryApi({
         queryKey: 'todo',
-        queryFn: async (id: number, { signal }) => ({
+        queryFn: async (id: number, context) => ({
           id,
-          aborted: signal.aborted,
+          aborted: context?.signal.aborted,
         }),
       });
+
+      // The fetcher can be called directly, without the context
+      expect(await fetchTodoQuery(2)).toEqual({ id: 2, aborted: undefined });
 
       const { result } = renderHook(() => useTodoQuery({ params: 1 }), {
         wrapper,
@@ -200,6 +203,14 @@ describe('QueryApi', () => {
       // Default error type is the react-query default one
       const { error }: { error: Error | null } = result.current;
       expect(error).toBeNull();
+    });
+
+    it('should not allow to rely on the query function context', () => {
+      createQueryApi({
+        queryKey: 'todo',
+        // @ts-expect-error context is undefined when the fetcher is called directly
+        queryFn: async (id: number, { signal }) => ({ id, signal }),
+      });
     });
   });
 });

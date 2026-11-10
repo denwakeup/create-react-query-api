@@ -1,3 +1,4 @@
 export * from './createQueryApi';
 export * from './types';
-export * from './constants';
+export { SkipToken } from './constants';
+export type { TSkipToken } from './constants';

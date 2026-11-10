@@ -28,9 +28,11 @@ interface ICommonKeysParams {
   disableUniqKeys: true;
 }
 
+// The context is optional everywhere: the same function is returned as
+// `fetchQuery` and can be called directly, without React Query
 type TQueryFnWithoutParams<R> = (
   queryParams: void,
-  context: QueryFunctionContext
+  context?: QueryFunctionContext
 ) => Promise<R>;
 
 type TQueryFnWithOptionalParams<R, P> = (
@@ -40,7 +42,7 @@ type TQueryFnWithOptionalParams<R, P> = (
 
 type TQueryFnWithParams<R, P> = (
   queryParams: P,
-  context: QueryFunctionContext
+  context?: QueryFunctionContext
 ) => Promise<R>;
 
 // Overloads with `disableUniqKeys: true` go first: otherwise an options object
