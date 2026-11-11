@@ -1,9 +1,10 @@
-export const SkipToken = Symbol.for('ReactQuerySkipToken');
-
-export type TSkipToken = typeof SkipToken;
+import type { SkipToken as RQSkipToken } from '@tanstack/react-query';
 
 /**
- * Query key segment used while a query is skipped, so a skipped hook never
- * shares a cache entry with the base key or with a real set of params
+ * Pass it instead of params to disable the query.
+ * It is the same token as `skipToken` from `@tanstack/react-query`,
+ * so both can be used interchangeably.
  */
-export const SKIPPED_QUERY_KEY_PART = 'ReactQuerySkipToken';
+export { skipToken as SkipToken } from '@tanstack/react-query';
+
+export type TSkipToken = RQSkipToken;

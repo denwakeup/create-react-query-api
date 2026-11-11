@@ -18,7 +18,6 @@ const config = {
       lines: 100,
     },
   },
-  prettierPath: require.resolve('prettier-2'),
 };
 
 export default config;

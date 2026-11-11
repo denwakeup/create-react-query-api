@@ -1,5 +1,5 @@
-import { mapApiToUniqKeys } from '../mapApiToUniqKeys';
 import { buildUniqApiKeys } from '../buildUniqApiKeys';
+import { mapApiToUniqKeys } from '../mapApiToUniqKeys';
 
 describe('Api To Uniq Keys mapper', () => {
   const mockGetQueryKey = jest.fn();

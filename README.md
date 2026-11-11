@@ -2,16 +2,18 @@
 
 [![npm](https://img.shields.io/npm/v/create-react-query-api)](https://www.npmjs.com/package/create-react-query-api)
 
-Simple [**React Query**](https://tanstack.com/query/latest) wrapper to create API with query key bound
+Simple [**TanStack Query (React Query)**](https://tanstack.com/query/latest) v5 wrapper to create API with query key bound
 
 ## Install
 
+Requires `@tanstack/react-query` v5.25.0 or newer.
+
 ```bash
 # yarn
-yarn add create-react-query-api
+yarn add create-react-query-api @tanstack/react-query
 
 # npm
-npm i --save create-react-query-api
+npm i create-react-query-api @tanstack/react-query
 ```
 
 ## How to use
@@ -85,7 +87,9 @@ const { useTodoQuery } = createQueryApi({
 });
 
 // ...
-// If you pass the skip token instead of parameters it will automatically disable the query ({ enabled: false })
+// If you pass the skip token instead of parameters it will disable the query.
+// `SkipToken` is the same value as `skipToken` from `@tanstack/react-query`, so you can use either one.
+// Note: `refetch()` does not work on a skipped query, pass real params to enable it.
 const { data, isLoading } = useTodoQuery({
   params: id ?? SkipToken,
 });

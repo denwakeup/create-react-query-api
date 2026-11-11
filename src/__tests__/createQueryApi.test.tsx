@@ -1,6 +1,6 @@
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { FC, PropsWithChildren } from 'react';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 import { createQueryApi } from '../createQueryApi';
 
@@ -55,12 +55,12 @@ describe('QueryApi', () => {
       );
 
       const data = await fetchTodoQuery(1);
-      expect(mockFetch).toBeCalled();
+      expect(mockFetch).toHaveBeenCalled();
       expect(data).toEqual({ id: 1 });
 
       await fetchTodoQuery(2);
       expect(mockFetch).toHaveBeenLastCalledWith(2);
-      expect(mockFetch).toBeCalledTimes(2);
+      expect(mockFetch).toHaveBeenCalledTimes(2);
     });
   });
 
@@ -119,7 +119,7 @@ describe('QueryApi', () => {
       });
 
       expect(result.current.data).toEqual({ id: 2 });
-      expect(mockFetch).toBeCalledTimes(2);
+      expect(mockFetch).toHaveBeenCalledTimes(2);
     });
   });
 
@@ -158,7 +158,7 @@ describe('QueryApi', () => {
 
       expect(first.result.current.data).toBe('number:0');
       expect(second.result.current.data).toBe('string:');
-      expect(fetchPage).toBeCalledTimes(2);
+      expect(fetchPage).toHaveBeenCalledTimes(2);
       expect(queryClient.getQueryData(getPageQueryKey())).toBeUndefined();
     });
   });

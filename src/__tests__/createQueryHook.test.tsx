@@ -1,6 +1,10 @@
+import {
+  QueryClient,
+  QueryClientProvider,
+  skipToken,
+} from '@tanstack/react-query';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { FC, PropsWithChildren } from 'react';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 import { SkipToken, TSkipToken } from '../constants';
 import { createQueryHook } from '../createQueryHook';
@@ -137,24 +141,50 @@ describe('useQuery hook creator', () => {
     );
   });
 
-  it('should not pass params to the react-query options', async () => {
-    const client = new QueryClient();
-    const clientWrapper: FC<PropsWithChildren> = ({ children }) => (
-      <QueryClientProvider client={client}>{children}</QueryClientProvider>
-    );
+  it('should accept skipToken from @tanstack/react-query', async () => {
+    expect(SkipToken).toBe(skipToken);
 
+    const mockedFetch = jest.fn();
     const useQuery = createQueryHook({
-      getQueryKey: (id?: number) => ['todo', id],
-      fetchQuery: (id?: number) => ({ id }),
+      getQueryKey: (id?: number) => ['skipped', id],
+      fetchQuery: mockedFetch,
     });
 
-    const { result } = renderHook(() => useQuery({ params: 7 }), {
-      wrapper: clientWrapper,
+    const { result } = renderHook(() => useQuery({ params: skipToken }), {
+      wrapper,
     });
 
-    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+    await waitFor(() => expect(result.current.fetchStatus).toBe('idle'));
+    expect(result.current.isPending).toBe(true);
+    expect(mockedFetch).not.toHaveBeenCalled();
+  });
 
-    const [query] = client.getQueryCache().findAll({ queryKey: ['todo', 7] });
-    expect(query.options).not.toHaveProperty('params');
+  it('refetch should not call fetchQuery when query is skipped', async () => {
+    const consoleError = jest
+      .spyOn(console, 'error')
+      .mockImplementation(() => undefined);
+    const noRetryClient = new QueryClient({
+      defaultOptions: { queries: { retry: false } },
+    });
+    const noRetryWrapper: FC<PropsWithChildren> = ({ children }) => (
+      <QueryClientProvider client={noRetryClient}>
+        {children}
+      </QueryClientProvider>
+    );
+    const mockedFetch = jest.fn();
+    const useQuery = createQueryHook({
+      getQueryKey: (id?: number) => ['skipped-refetch', id],
+      fetchQuery: mockedFetch,
+    });
+
+    const { result } = renderHook(() => useQuery({ params: SkipToken }), {
+      wrapper: noRetryWrapper,
+    });
+
+    const refetchResult = await act(() => result.current.refetch());
+
+    expect(mockedFetch).not.toHaveBeenCalled();
+    expect(refetchResult.error).toBeInstanceOf(Error);
+    consoleError.mockRestore();
   });
 });

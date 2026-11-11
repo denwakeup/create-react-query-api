@@ -1,13 +1,13 @@
-import path from 'path';
-import { defineConfig } from 'vite';
+import path from 'node:path';
 import typescript from '@rollup/plugin-typescript';
+import { defineConfig } from 'vite';
 
-import packageJson from './package.json';
+import packageJson from './package.json' with { type: 'json' };
 
 export default defineConfig({
   build: {
     lib: {
-      entry: path.resolve(__dirname, 'src/index.ts'),
+      entry: path.resolve(import.meta.dirname, 'src/index.ts'),
       name: 'CreateReactQueryApi',
       // The package is `type: module`, so the UMD bundle must have the `.cjs`
       // extension, otherwise Node treats it as an ES module
@@ -23,5 +23,12 @@ export default defineConfig({
       },
     },
   },
-  plugins: [typescript({ tsconfig: './tsconfig.build.json' })],
+  plugins: [
+    typescript({
+      rootDir: 'src',
+      declarationDir: 'dist',
+      noEmit: false,
+      exclude: ['**/__tests__/**'],
+    }),
+  ],
 });
