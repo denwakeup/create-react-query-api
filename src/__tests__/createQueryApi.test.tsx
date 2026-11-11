@@ -1,6 +1,6 @@
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { FC, PropsWithChildren } from 'react';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 import { createQueryApi } from '../createQueryApi';
 
@@ -55,12 +55,12 @@ describe('QueryApi', () => {
       );
 
       const data = await fetchTodoQuery(1);
-      expect(mockFetch).toBeCalled();
+      expect(mockFetch).toHaveBeenCalled();
       expect(data).toEqual({ id: 1 });
 
       await fetchTodoQuery(2);
       expect(mockFetch).toHaveBeenLastCalledWith(2);
-      expect(mockFetch).toBeCalledTimes(2);
+      expect(mockFetch).toHaveBeenCalledTimes(2);
     });
   });
 
@@ -83,12 +83,12 @@ describe('QueryApi', () => {
         },
       });
 
-      await waitFor(() => result.current.isSuccess);
+      await waitFor(() => expect(result.current.isSuccess).toBe(true));
       expect(result.current.data).toEqual({ id: 2 });
       expect(queryClient.getQueryData(getTodoQueryKey(2))).toEqual({ id: 2 });
 
       rerender({ params: 3 });
-      await waitFor(() => result.current.isSuccess);
+      await waitFor(() => expect(result.current.isSuccess).toBe(true));
       expect(result.current.data).toEqual({ id: 3 });
       expect(queryClient.getQueryData(getTodoQueryKey(3))).toEqual({ id: 3 });
     });
@@ -111,7 +111,7 @@ describe('QueryApi', () => {
         },
       });
 
-      await waitFor(() => result.current.isSuccess);
+      await waitFor(() => expect(result.current.isSuccess).toBe(true));
       expect(result.current.data).toEqual({ id: 2 });
 
       await act(async () => {
@@ -119,7 +119,7 @@ describe('QueryApi', () => {
       });
 
       expect(result.current.data).toEqual({ id: 2 });
-      expect(mockFetch).toBeCalledTimes(2);
+      expect(mockFetch).toHaveBeenCalledTimes(2);
     });
   });
 

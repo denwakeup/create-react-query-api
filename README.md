@@ -2,16 +2,18 @@
 
 [![npm](https://img.shields.io/npm/v/create-react-query-api)](https://www.npmjs.com/package/create-react-query-api)
 
-Simple [**React Query**](https://react-query.tanstack.com) wrapper to create API with query key bound
+Simple [**TanStack Query (React Query)**](https://tanstack.com/query/latest) v5 wrapper to create API with query key bound
 
 ## Install
 
-```bash
-// yarn
-yarn add create-react-query-api
+Requires `@tanstack/react-query` v5.25.0 or newer.
 
-// npm
-npm i --save create-react-query-api
+```bash
+# yarn
+yarn add create-react-query-api @tanstack/react-query
+
+# npm
+npm i create-react-query-api @tanstack/react-query
 ```
 
 ## How to use
@@ -49,8 +51,8 @@ const { getTodoQueryKey } = createQueryApi({
     fetch(`/api/todo/${id}`).then((response): Promise<Todo> => response.json()),
 });
 
-queryClient.invalidateQueries(getTodoQueryKey()); // queryKey=['todo']
-queryClient.invalidateQueries(getTodoQueryKey('1')); // queryKey=['todo', '1']
+queryClient.invalidateQueries({ queryKey: getTodoQueryKey() }); // queryKey=['todo']
+queryClient.invalidateQueries({ queryKey: getTodoQueryKey('1') }); // queryKey=['todo', '1']
 ```
 
 ### Using a key hierarchy
@@ -78,14 +80,16 @@ getTodoQueryKey('2'); // ['allTodo', 'todo', '2']
 ```ts
 import { SkipToken } from 'create-react-query-api';
 
-const { fetchTodoQuery } = createQueryApi({
+const { useTodoQuery } = createQueryApi({
   queryKey: 'todo',
   queryFn: (id: string) =>
     fetch(`/api/todo/${id}`).then((response): Promise<Todo> => response.json()),
 });
 
 // ...
-// If you pass the skip token instead of parameters it will automatically disable the query ({ enabled: false })
+// If you pass the skip token instead of parameters it will disable the query.
+// `SkipToken` is the same value as `skipToken` from `@tanstack/react-query`, so you can use either one.
+// Note: `refetch()` does not work on a skipped query, pass real params to enable it.
 const { data, isLoading } = useTodoQuery({
   params: id ?? SkipToken,
 });
@@ -120,7 +124,7 @@ const { useUserQuery, getUserQueryKey, fetchUserQuery } = createQueryApi({
   // ...
 });
 
-// You can disable this behavior by passing disableUniqKeys=false
+// You can disable this behavior by passing disableUniqKeys=true
 const { useQuery, fetchQuery, getQueryKey } = createQueryApi({
   queryKey: 'todo',
   disableUniqKeys: true,

@@ -1,4 +1,4 @@
-import { IQueryApi, IUniqQueryApi, IUniqApiKeys } from './types';
+import { IQueryApi, IUniqApiKeys, IUniqQueryApi } from './types';
 
 export const mapApiToUniqKeys = <K extends string, R, P>(
   api: IQueryApi<R, P>,

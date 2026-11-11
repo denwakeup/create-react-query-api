@@ -1,5 +1,5 @@
-import { createQueryKeyBuilder } from './createQueryKeyBuilder';
 import { createQueryHook } from './createQueryHook';
+import { createQueryKeyBuilder } from './createQueryKeyBuilder';
 import { IQueryApi, IQueryKeyBuilder } from './types';
 
 interface IParams<R, P> {

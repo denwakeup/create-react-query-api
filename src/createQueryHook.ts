@@ -1,6 +1,5 @@
-import { QueryKey, useQuery } from '@tanstack/react-query';
+import { QueryKey, skipToken, useQuery } from '@tanstack/react-query';
 
-import { SkipToken } from './constants';
 import { IQueryHookCommonOptions, IQueryHookParams } from './types';
 
 interface IParams<R, P> {
@@ -13,12 +12,13 @@ export const createQueryHook =
   <E = unknown, D = R>(
     options?: IQueryHookCommonOptions<R, E, D> & Partial<IQueryHookParams<P>>
   ) => {
-    const params = options?.params === SkipToken ? undefined : options?.params;
+    const { params: rawParams, ...queryOptions } = options ?? {};
+    const isSkipped = rawParams === skipToken;
+    const params = isSkipped ? undefined : rawParams;
 
-    return useQuery({
-      ...options,
+    return useQuery<R, E, D>({
+      ...queryOptions,
       queryKey: getQueryKey(params),
-      queryFn: () => fetchQuery(params),
-      enabled: options?.params === SkipToken ? false : options?.enabled,
+      queryFn: isSkipped ? skipToken : () => fetchQuery(params),
     });
   };
