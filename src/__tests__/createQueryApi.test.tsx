@@ -137,4 +137,80 @@ describe('QueryApi', () => {
       expect(result.useQuery).toBeDefined();
     });
   });
+
+  describe('Falsy params', () => {
+    it('should not share cache between different falsy params', async () => {
+      const fetchPage = jest.fn(
+        async (page: number | string) => `${typeof page}:${page}`
+      );
+      const { usePageQuery, getPageQueryKey } = createQueryApi({
+        queryKey: 'page',
+        queryFn: fetchPage,
+      });
+
+      const first = renderHook(() => usePageQuery({ params: 0 }), { wrapper });
+      await waitFor(() => expect(first.result.current.isSuccess).toBe(true));
+
+      const second = renderHook(() => usePageQuery({ params: '' }), {
+        wrapper,
+      });
+      await waitFor(() => expect(second.result.current.isSuccess).toBe(true));
+
+      expect(first.result.current.data).toBe('number:0');
+      expect(second.result.current.data).toBe('string:');
+      expect(fetchPage).toHaveBeenCalledTimes(2);
+      expect(queryClient.getQueryData(getPageQueryKey())).toBeUndefined();
+    });
+  });
+
+  describe('Types', () => {
+    it('should match runtime keys for a non-literal options object', () => {
+      const options = {
+        queryKey: 'todo' as const,
+        queryFn: async () => 1,
+        disableUniqKeys: true as const,
+      };
+
+      const api = createQueryApi(options);
+
+      expect(Object.keys(api).sort()).toEqual([
+        'fetchQuery',
+        'getQueryKey',
+        'useQuery',
+      ]);
+      // @ts-expect-error uniq keys are disabled
+      expect(api.useTodoQuery).toBeUndefined();
+    });
+
+    it('should allow to use the query function context', async () => {
+      const { useTodoQuery, fetchTodoQuery } = createQueryApi({
+        queryKey: 'todo',
+        queryFn: async (id: number, context) => ({
+          id,
+          aborted: context?.signal.aborted,
+        }),
+      });
+
+      // The fetcher can be called directly, without the context
+      expect(await fetchTodoQuery(2)).toEqual({ id: 2, aborted: undefined });
+
+      const { result } = renderHook(() => useTodoQuery({ params: 1 }), {
+        wrapper,
+      });
+
+      await waitFor(() => expect(result.current.isSuccess).toBe(true));
+      expect(result.current.data).toEqual({ id: 1, aborted: false });
+      // Default error type is the react-query default one
+      const { error }: { error: Error | null } = result.current;
+      expect(error).toBeNull();
+    });
+
+    it('should not allow to rely on the query function context', () => {
+      createQueryApi({
+        queryKey: 'todo',
+        // @ts-expect-error context is undefined when the fetcher is called directly
+        queryFn: async (id: number, { signal }) => ({ id, signal }),
+      });
+    });
+  });
 });

@@ -1,5 +1,27 @@
 # Changelog
 
+## Unreleased
+
+### Fixed
+
+- Falsy params (`0`, `''`, `false`, `null`) are no longer dropped from the
+  query key. Previously `getPageQueryKey(0)` returned the base key, so such
+  params shared one cache entry with each other and with "no params".
+- The CommonJS entry is now `dist/index.umd.cjs`. The package is
+  `type: module`, so the former `dist/index.umd.js` was loaded as an ES module
+  and `require('create-react-query-api')` returned an empty object.
+- A skipped query no longer reads data cached under the base key: it gets its
+  own query key.
+- `createQueryApi` types now match the runtime value when `disableUniqKeys:
+  true` is passed in an options object that is not a literal.
+
+### Changed
+
+- `queryFn` receives the React Query function context as an optional second
+  argument, so `signal` can be used for request cancellation.
+- The default error type of the hooks is now `DefaultError` (`Error`), as in
+  TanStack Query v5, instead of `unknown`.
+
 ## 2.0.0
 
 ### Breaking changes

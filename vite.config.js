@@ -9,7 +9,10 @@ export default defineConfig({
     lib: {
       entry: path.resolve(import.meta.dirname, 'src/index.ts'),
       name: 'CreateReactQueryApi',
-      fileName: (format) => `index.${format}.js`,
+      // The package is `type: module`, so the UMD bundle must have the `.cjs`
+      // extension, otherwise Node treats it as an ES module
+      fileName: (format) =>
+        format === 'umd' ? 'index.umd.cjs' : 'index.es.js',
     },
     rollupOptions: {
       external: [...Object.keys(packageJson.peerDependencies)],

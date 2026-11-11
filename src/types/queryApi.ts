@@ -1,3 +1,5 @@
+import { QueryFunctionContext } from '@tanstack/react-query';
+
 import {
   IQueryHook,
   IQueryHookWithoutParams,
@@ -10,17 +12,17 @@ interface IQueryBaseApi<P = void> {
 
 export interface IQueryApi<R, P> extends IQueryBaseApi<P> {
   useQuery: IQueryHook<R, P>;
-  fetchQuery: (params?: P) => Promise<R>;
+  fetchQuery: (params?: P, context?: QueryFunctionContext) => Promise<R>;
 }
 
 export interface IQueryApiWithParams<R, P> extends IQueryBaseApi<P> {
   useQuery: IQueryHookWithParams<R, P>;
-  fetchQuery: (params: P) => Promise<R>;
+  fetchQuery: (params: P, context?: QueryFunctionContext) => Promise<R>;
 }
 
 export interface IQueryApiWithoutParams<R> extends IQueryBaseApi {
   useQuery: IQueryHookWithoutParams<R>;
-  fetchQuery: () => Promise<R>;
+  fetchQuery: (params?: void, context?: QueryFunctionContext) => Promise<R>;
 }
 
 export type IQueryApiUnion<R, P> =

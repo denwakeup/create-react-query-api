@@ -1,15 +1,27 @@
-import { QueryKey, skipToken, useQuery } from '@tanstack/react-query';
+import {
+  DefaultError,
+  QueryFunctionContext,
+  QueryKey,
+  skipToken,
+  useQuery,
+} from '@tanstack/react-query';
 
 import { IQueryHookCommonOptions, IQueryHookParams } from './types';
 
 interface IParams<R, P> {
   getQueryKey: (params?: P) => QueryKey;
-  fetchQuery: (params?: P) => Promise<R> | R;
+  fetchQuery: (params?: P, context?: QueryFunctionContext) => Promise<R> | R;
 }
+
+/**
+ * Query key segment used while a query is skipped, so a skipped hook never
+ * shares a cache entry with the base key or with a real set of params
+ */
+const SKIPPED_QUERY_KEY_PART = 'ReactQuerySkipToken';
 
 export const createQueryHook =
   <P, R>({ getQueryKey, fetchQuery }: IParams<R, P>) =>
-  <E = unknown, D = R>(
+  <E = DefaultError, D = R>(
     options?: IQueryHookCommonOptions<R, E, D> & Partial<IQueryHookParams<P>>
   ) => {
     const { params: rawParams, ...queryOptions } = options ?? {};
@@ -18,7 +30,9 @@ export const createQueryHook =
 
     return useQuery<R, E, D>({
       ...queryOptions,
-      queryKey: getQueryKey(params),
-      queryFn: isSkipped ? skipToken : () => fetchQuery(params),
+      queryKey: isSkipped
+        ? [...getQueryKey(), SKIPPED_QUERY_KEY_PART]
+        : getQueryKey(params),
+      queryFn: isSkipped ? skipToken : (context) => fetchQuery(params, context),
     });
   };
