@@ -1,10 +1,12 @@
+import { QueryFunctionContext } from '@tanstack/react-query';
+
 import { createQueryHook } from './createQueryHook';
 import { createQueryKeyBuilder } from './createQueryKeyBuilder';
 import { IQueryApi, IQueryKeyBuilder } from './types';
 
 interface IParams<R, P> {
   queryKey: string;
-  fetchQuery: (params?: P) => Promise<R>;
+  fetchQuery: (params?: P, context?: QueryFunctionContext) => Promise<R>;
   queryKeyBuilder: IQueryKeyBuilder | undefined;
 }
 

@@ -87,8 +87,58 @@ describe('useQuery hook creator', () => {
       rerender({ params: 3 });
     });
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(mockedFetch).toHaveBeenCalledWith(3);
+    expect(mockedFetch).toHaveBeenCalledWith(3, expect.anything());
     expect(result.current.data).toEqual({ id: 3 });
+  });
+
+  it('skipped query should not read data cached by the base key', () => {
+    const client = new QueryClient();
+    const clientWrapper: FC<PropsWithChildren> = ({ children }) => (
+      <QueryClientProvider client={client}>{children}</QueryClientProvider>
+    );
+    const getQueryKey = (id?: number) =>
+      id === undefined ? ['todo'] : ['todo', id];
+
+    client.setQueryData(getQueryKey(), [{ id: 1 }]);
+
+    const useQuery = createQueryHook({
+      getQueryKey,
+      fetchQuery: (id?: number) => ({ id }),
+    });
+
+    const { result } = renderHook(() => useQuery({ params: SkipToken }), {
+      wrapper: clientWrapper,
+    });
+
+    expect(result.current.data).toBeUndefined();
+    expect(result.current.status).toBe('pending');
+    expect(result.current.fetchStatus).toBe('idle');
+  });
+
+  it('should pass the query function context to the fetcher', async () => {
+    const client = new QueryClient();
+    const clientWrapper: FC<PropsWithChildren> = ({ children }) => (
+      <QueryClientProvider client={client}>{children}</QueryClientProvider>
+    );
+    const mockedFetch = jest.fn().mockImplementation((id: number) => ({ id }));
+
+    const useQuery = createQueryHook({
+      getQueryKey: (id?: number) => ['todo', id],
+      fetchQuery: mockedFetch,
+    });
+
+    const { result } = renderHook(() => useQuery({ params: 5 }), {
+      wrapper: clientWrapper,
+    });
+
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+    expect(mockedFetch).toHaveBeenCalledWith(
+      5,
+      expect.objectContaining({
+        queryKey: ['todo', 5],
+        signal: expect.any(AbortSignal),
+      })
+    );
   });
 
   it('should accept skipToken from @tanstack/react-query', async () => {

@@ -109,6 +109,20 @@ const { fetchTodoQuery } = createQueryApi({
 await fetchTodoQuery('1');
 ```
 
+### Request cancellation
+
+`queryFn` receives the React Query [function context](https://tanstack.com/query/latest/docs/framework/react/guides/query-cancellation) as the second argument. The context is `undefined` when the fetcher is called directly (`fetchTodoQuery('1')`), so it is typed as optional
+
+```ts
+const { useTodoQuery } = createQueryApi({
+  queryKey: 'todo',
+  queryFn: (id: string, context) =>
+    fetch(`/api/todo/${id}`, { signal: context?.signal }).then(
+      (response): Promise<Todo> => response.json()
+    ),
+});
+```
+
 ### Disable unique api method names
 
 By default `createQueryApi` creates method names using the passed `queryKey`
@@ -131,3 +145,5 @@ const { useQuery, fetchQuery, getQueryKey } = createQueryApi({
   // ...
 });
 ```
+
+> Method names are built from `queryKey` as is (only the first letter is capitalized), so use a key that is a valid identifier part (`todoList`, not `todo-list`) or pass `disableUniqKeys: true`

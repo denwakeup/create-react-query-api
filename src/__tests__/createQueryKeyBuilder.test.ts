@@ -12,6 +12,19 @@ describe('Query Key Builder creator', () => {
     expect(builder({ id: 2 })).toEqual(['todo', { id: 2 }]);
   });
 
+  it('should keep falsy params in the key', () => {
+    const builder = createQueryKeyBuilder({
+      queryKey: 'todo',
+      queryKeyBuilder: undefined,
+    });
+
+    expect(builder(0)).toEqual(['todo', 0]);
+    expect(builder('')).toEqual(['todo', '']);
+    expect(builder(false)).toEqual(['todo', false]);
+    expect(builder(null)).toEqual(['todo', null]);
+    expect(builder(undefined)).toEqual(['todo']);
+  });
+
   it('should work correctly with queryKeyFn', () => {
     const builder = createQueryKeyBuilder({
       queryKey: 'todo',
