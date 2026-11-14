@@ -177,14 +177,17 @@ describe('useQuery hook creator', () => {
       fetchQuery: mockedFetch,
     });
 
-    const { result } = renderHook(() => useQuery({ params: SkipToken }), {
-      wrapper: noRetryWrapper,
-    });
+    try {
+      const { result } = renderHook(() => useQuery({ params: SkipToken }), {
+        wrapper: noRetryWrapper,
+      });
 
-    const refetchResult = await act(() => result.current.refetch());
+      const refetchResult = await act(() => result.current.refetch());
 
-    expect(mockedFetch).not.toHaveBeenCalled();
-    expect(refetchResult.error).toBeInstanceOf(Error);
-    consoleError.mockRestore();
+      expect(mockedFetch).not.toHaveBeenCalled();
+      expect(refetchResult.error).toBeInstanceOf(Error);
+    } finally {
+      consoleError.mockRestore();
+    }
   });
 });
